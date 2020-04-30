@@ -18,8 +18,8 @@ class CString
     public:
         int len;
         string str;
-        string fname;
         Line line;
+        string fname;
         bool isFabric;
         CString();
         CString(string str);

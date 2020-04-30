@@ -106,7 +106,7 @@ void OpenMP_Test()
     CString0 b("");
     CString0 c, c1;
 
-    int N = 1000000000;
+    int N = 100000000;
     cout << "Wait, please..." << endl;
     
     a.str.reserve(N);
