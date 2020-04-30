@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include "omp.h"
+#include <chrono>
 using namespace std;
 
 typedef struct Line

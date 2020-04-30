@@ -10,7 +10,20 @@ CString0 operator+(const CString& first, const CString& second)
 {
     CString0 res;
     res.len = first.len + second.len;
-    res.str = first.str + second.str;
+    res.str.reserve(res.len);
+    chrono::time_point<std::chrono::system_clock> start = chrono::system_clock::now();
+    #pragma omp parallel for
+    for (int i = 0; i < res.len; i++){
+        if (i < first.len){
+           res.str.push_back(first.str[i]);
+        }
+        if (i >= first.len){
+          res.str.push_back(second.str[i - first.len]);
+        }
+    }
+    chrono::time_point<std::chrono::system_clock> end = chrono::system_clock::now();
+    double elapsed_ms = (chrono::duration_cast<chrono::milliseconds>(end - start).count());
+    cout << "Operator '+' time is: " << elapsed_ms/1000 << " sec" << endl;
     return res;
 }
 
@@ -76,7 +89,7 @@ void Test1()
         v[i]->output();
     }
 
-    cout << "TEST1: DONE. CHECK OUTPUT FILES" << endl;
+    cout << "\nTEST1: DONE. CHECK OUTPUT FILES" << endl;
 }
 
 void Test2()
@@ -87,25 +100,36 @@ void Test2()
     cout << "TEST2: DONE. CHECK OUTPUT FILE" << endl;
 }
 
-void Test3()
+void OpenMP_Test()
 {
-    CString1 a("Hello, ");
-    CString0 b("world!");
-    CString0 c;
+    CString1 a("");
+    CString0 b("");
+    CString0 c, c1;
+
+    int N = 1000000000;
+    cout << "Wait, please..." << endl;
     
+    a.str.reserve(N);
+    b.str.reserve(N);
+    for (int i = 0; i < N; i++){
+        a.str.push_back('a');
+        b.str.push_back('b');
+    }
+    a.len = b.len = N;
+
     c = a + b;
 
-    if ((a + b).str == "Hello, world!")
+    if ((c).str == a.str + b.str)
     {
-        cout << "TEST3: PASSED!" << endl;
+        cout << "OpenMP_Test: PASSED!\n" << endl;
     }
     else
     {
-        cout << "TEST3: FAILED!" << endl;
+        cout << "OpenMP_Test: FAILED!\n" << endl;
     }
 }
 
-void Test4()
+void Test3()
 {
     // CString0 c;
     string d = "Goodbye, world!";
@@ -115,10 +139,10 @@ void Test4()
     
     if (c.str == "Goodbye, world!")
     {
-        cout << "TEST4: PASSED!" << endl;
+        cout << "TEST3: PASSED!" << endl;
     }
     else
     {
-        cout << "TEST2: FAILED!" << endl;
+        cout << "TEST3: FAILED!" << endl;
     }
 }
