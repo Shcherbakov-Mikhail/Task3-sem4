@@ -10,15 +10,15 @@ CString0 operator+(const CString& first, const CString& second)
 {
     CString0 res;
     res.len = first.len + second.len;
-    res.str.reserve(res.len);
+    res.str.resize(res.len);
     chrono::time_point<std::chrono::system_clock> start = chrono::system_clock::now();
     #pragma omp parallel for
     for (int i = 0; i < res.len; i++){
         if (i < first.len){
-           res.str.push_back(first.str[i]);
+          res.str[i] = first.str[i];
         }
         if (i >= first.len){
-          res.str.push_back(second.str[i - first.len]);
+          res.str[i] = second.str[i - first.len];
         }
     }
     chrono::time_point<std::chrono::system_clock> end = chrono::system_clock::now();
@@ -109,11 +109,11 @@ void OpenMP_Test()
     int N = 100000000;
     cout << "Wait, please..." << endl;
     
-    a.str.reserve(N);
-    b.str.reserve(N);
+    a.str.resize(N);
+    b.str.resize(N);
     for (int i = 0; i < N; i++){
-        a.str.push_back('a');
-        b.str.push_back('b');
+        a.str[i] = 'a';
+        b.str[i] = 'b';
     }
     a.len = b.len = N;
 
